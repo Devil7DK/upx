@@ -47,7 +47,7 @@ Packer::Packer(InputFile *f) :
     if (fi != NULL)
         file_size = fi->st_size();
     uip = new UiPacker(this);
-    memset(&ph, 0, sizeof(ph));
+    memset(static_cast<void*>(&ph), 0, sizeof(ph));
 }
 
 
@@ -665,7 +665,7 @@ unsigned Packer::getRandomId() const
 // this is called directly after the constructor from class PackMaster
 void Packer::initPackHeader()
 {
-    memset(&ph, 0, sizeof(ph));
+    memset(static_cast<void*>(&ph), 0, sizeof(ph));
     ph.version = getVersion();
     ph.format = getFormat();
     ph.method = M_NONE;
@@ -1054,21 +1054,9 @@ unsigned Packer::unoptimizeReloc64(upx_byte **in, upx_byte *image,
 static const char *getIdentstr(unsigned *size, int small)
 {
     // IMPORTANT: we do NOT change "http://upx.sf.net"
-    static char identbig[] =
-        "\n\0"
-        "$Info: "
-        "This file is packed with the UPX executable packer http://upx.sf.net $"
-        "\n\0"
-        "$Id: UPX "
-        UPX_VERSION_STRING4
-        " Copyright (C) 1996-" UPX_VERSION_YEAR " the UPX Team. All Rights Reserved. $"
-        "\n";
-    static char identsmall[] =
-        "\n"
-        "$Id: UPX "
-        "(C) 1996-" UPX_VERSION_YEAR " the UPX Team. All Rights Reserved. http://upx.sf.net $"
-        "\n";
-    static char identtiny[] = UPX_VERSION_STRING4;
+    static char identbig[] = "-";
+    static char identsmall[] = "-";
+    static char identtiny[] = "-";
 
     static int done;
     if (!done && (opt->debug.fake_stub_version[0] || opt->debug.fake_stub_year[0]))
